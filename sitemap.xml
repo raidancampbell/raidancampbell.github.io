@@ -3,26 +3,26 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://localhost:1313/posts/context-in-go/</loc>
+    <loc>https://raidancampbell.com/posts/context-in-go/</loc>
     <lastmod>2020-05-22T14:58:47-07:00</lastmod>
   </url>
   
   <url>
-    <loc>http://localhost:1313/posts/</loc>
+    <loc>https://raidancampbell.com/posts/</loc>
     <lastmod>2020-05-22T14:58:47-07:00</lastmod>
   </url>
   
   <url>
-    <loc>http://localhost:1313/</loc>
+    <loc>https://raidancampbell.com/</loc>
     <lastmod>2020-05-22T14:58:47-07:00</lastmod>
   </url>
   
   <url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>https://raidancampbell.com/categories/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>https://raidancampbell.com/tags/</loc>
   </url>
   
 </urlset>
