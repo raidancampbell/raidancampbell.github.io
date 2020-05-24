@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Design Considerations for Context in Go - raidancampbell</title>
+  <meta name="description" content="A brief introduction to Context  &ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between processes.&rdquo; - golang.org
+ Context in Go is often critiqued for handling two distinct scenarios under one tool: cancellation and scoped data. While I tend to agree, this post is aimed to inform rather than persuade.
+Contexts are derived: each child context is made by adding additional cancellations or values from its parent.">
+  <meta name="author" content="R. Aidan Campbell"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "raidancampbell",
+    
+    "url": "http:\/\/localhost:1313"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "http:\/\/localhost:1313"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "http:\/\/localhost:1313",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "http:\/\/localhost:1313\/posts\/context-in-go\/",
+          "name": "Design considerations for context in go"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "R. Aidan Campbell"
+  },
+  "headline": "Design Considerations for Context in Go",
+  "description" : "A brief introduction to Context  \x26ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between processes.\x26rdquo; - golang.org\n Context in Go is often critiqued for handling two distinct scenarios under one tool: cancellation and scoped data. While I tend to agree, this post is aimed to inform rather than persuade.\nContexts are derived: each child context is made by adding additional cancellations or values from its parent.",
+  "inLanguage" : "en",
+  "wordCount":  1097 ,
+  "datePublished" : "2020-05-22T14:58:47",
+  "dateModified" : "2020-05-22T14:58:47",
+  "image" : "http:\/\/localhost:1313",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "http:\/\/localhost:1313\/posts\/context-in-go\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "http:\/\/localhost:1313",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "http:\/\/localhost:1313",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Design Considerations for Context in Go" />
+<meta property="og:description" content="A brief introduction to Context  &ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between processes.&rdquo; - golang.org
+ Context in Go is often critiqued for handling two distinct scenarios under one tool: cancellation and scoped data. While I tend to agree, this post is aimed to inform rather than persuade.
+Contexts are derived: each child context is made by adding additional cancellations or values from its parent.">
+<meta property="og:url" content="http://localhost:1313/posts/context-in-go/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="raidancampbell" />
+
+  <meta name="twitter:title" content="Design Considerations for Context in Go" />
+  <meta name="twitter:description" content="A brief introduction to Context  &ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between …">
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@@raidancampbell" />
+  <meta name="twitter:creator" content="@@raidancampbell" />
+  <meta name="generator" content="Hugo 0.71.0" />
+  <link rel="alternate" href="http://localhost:1313/index.xml" type="application/rss+xml" title="raidancampbell"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="http://localhost:1313/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="http://localhost:1313/css/syntax.css" /><link rel="stylesheet" href="http://localhost:1313/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-62271915-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://localhost:1313">raidancampbell</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="posts-heading">
+              
+                <h1>Design Considerations for Context in Go</h1>
+              
+              
+                <hr class="small">
+              
+              
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <h2 id="a-brief-introduction-to-context">A brief introduction to Context</h2>
+<blockquote>
+<p>&ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between processes.&rdquo; - <a href="https://golang.org/pkg/context/">golang.org</a></p>
+</blockquote>
+<p>Context in Go is often critiqued for handling two distinct scenarios under one tool: <a href="https://dave.cheney.net/2017/01/26/context-is-for-cancelation">cancellation</a> and <a href="https://dave.cheney.net/2017/08/20/context-isnt-for-cancellation">scoped data</a>.
+While I tend to agree, this post is aimed to inform rather than persuade.</p>
+<p>Contexts are derived: each child context is made by adding additional cancellations or values from its parent.
+As soon as those contexts fall out of scope their additions, whether they be tighter deadlines or additional data, are lost.</p>
+
+<link rel="stylesheet" href="http://localhost:1313/css/hugo-easy-gallery.css" />
+<div class="box" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/media/context_composability.svg" alt="/media/context_composability.svg"/>
+    </div>
+    <a href="/media/context_composability.svg" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<p>Leveraging this, we can achieve scoping outside the formal interpretation of the language. A variable stored in a context can be accessed by anyone receiving that context, whereas a variable created in a function must be passed through.<br>
+We can use this to carve our own lines on what &ldquo;scope&rdquo; means for our context:</p>
+<ul>
+<li>a single HTTP request, tracked from start to finish</li>
+</ul>
+
+
+<div class="box" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/media/context_http.svg" alt="/media/context_http.svg"/>
+    </div>
+    <a href="/media/context_http.svg" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<ul>
+<li>an event processing through a chain, where each link enriches the context</li>
+</ul>
+
+
+<div class="box" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/media/context_chain.svg" alt="/media/context_chain.svg"/>
+    </div>
+    <a href="/media/context_chain.svg" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<ul>
+<li>an event processing through a ruleset, where each rule applies its own context, which is lost after the rule completes</li>
+</ul>
+
+
+<div class="box" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/media/context_rulechain.svg" alt="/media/context_rulechain.svg"/>
+    </div>
+    <a href="/media/context_rulechain.svg" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<p><code>context.Background()</code> is the &ldquo;root&rdquo; context.  All child contexts are derived from this, and you can have multiple root contexts.  It&rsquo;s not useful on its own.<br>
+<code>context.TODO()</code> <a href="https://golang.org/src/context/context.go#L200">is identical to</a> <code>context.Background()</code>, except it leverages the fact that IDEs usually flag anything &ldquo;TODO&rdquo; with a warning.
+<code>context.TODO()</code> is generally used for code that&rsquo;s missing connecting dots: somewhere up the callstack has context support, but the context was omitted somewhere up the stack.</p>
+<h3 id="context-for-cancellation">Context for cancellation</h3>
+<p>Imagine a scenario in which we guarantee an SLA response time of 100 milliseconds.
+Our code takes 50 milliseconds to respond, unless some cache is stale, in which case a network timeout would take 1000 milliseconds to fail.
+Once the request hits our HTTP endpoint we can create a context for it and specify a deadline of, for example, 90 milliseconds.
+All context-respecting functions will first check if the deadline has passed: if it has, then they return immediately.
+For any I/O, we don&rsquo;t just wait on the I/O to complete.  We must also wait on the context deadline to hit.  If the deadline is hit, we return immediately.
+See the <a href="https://golang.org/src/context/example_test.go#L57">golang.org example</a> for a better idea.</p>
+<h3 id="context-for-storage">Context for storage</h3>
+<p>Imagine we wanted to tag an ID to each request.  This would be useful to trace logs, or identify a unique event.
+This is a perfect scenario for <code>context.WithValue()</code>.
+<code>WithValue</code> expects each value it&rsquo;s given to be identified by a key, similar to a <code>map[interface{}]interface{}</code>.
+When adding a value to the context, it&rsquo;s good practice to use a key that&rsquo;s a struct.
+Using a struct leverages the type system to limit scope and guarantee uniqueness.</p>
+<h5 id="here-be-footguns">Here be Footguns</h5>
+<blockquote>
+<p>Footgun: &ldquo;A gun which is apparently designed for shooting yourself in the foot.&rdquo; - <a href="https://www.urbandictionary.com/define.php?term=footgun">Urban Dictionary</a></p>
+</blockquote>
+<p>Golang is a statically typed language, this was chosen by the language creators and trying to subvert this is a Bad Idea™.
+Context, used as a <code>map[interface{}]interface{}</code>, can hold all of your variables: you can have a function that just receives a single <code>context.Context</code>.
+If I catch you doing this, I&rsquo;ll tell your mother. Do not, under any circumstances, store critical data in the context.
+There&rsquo;s no guarantees that the data will be there at runtime and everyone can read each other&rsquo;s variables, it&rsquo;s just a mess.  Please don&rsquo;t.</p>
+<p>When using context for storage, the key should be an unexported struct.
+This ensures the value in the context doesn&rsquo;t bleed into other packages.
+For example, a context used in logging may set a transaction ID with a key only known to the logging package.
+The logging package is the only one that can access the transaction ID at compile time, preventing abuse.</p>
+<h2 id="context-flows">Context flows</h2>
+<p>Think long and hard if you ever write a line that looks like <code>x = ctx</code>.  If you still want to write it, think long and hard again.
+The benefit of context defining its own scope is lost once you store a context in a variable.
+It can be passed alongside mere mortal variables or embedded inside structs.
+When stored, a context can easily find itself alongside an existing context and cause conflicts.</p>
+<p>An acceptable exception is serialization to pass via a channel.  Even in this scenario, consider whether this is the correct approach since it opens up opportunities to keep the context stored.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+
+<span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;context&#34;</span>
+	<span style="color:#e6db74">&#34;fmt&#34;</span>
+	<span style="color:#e6db74">&#34;math/rand&#34;</span>
+	<span style="color:#e6db74">&#34;time&#34;</span>
+)
+
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">structWithCtx</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">data</span> <span style="color:#66d9ef">string</span>
+	<span style="color:#a6e22e">ctx</span>  <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">workChan</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">structWithCtx</span>)
+
+	<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">longLivedWorker</span>(<span style="color:#a6e22e">workChan</span>)
+
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">work</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">structWithCtx</span>{
+			<span style="color:#a6e22e">data</span>: <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;work piece number %d&#34;</span>, <span style="color:#a6e22e">i</span>),
+            <span style="color:#75715e">// the context gets serialized so that it may flow through the channel
+</span><span style="color:#75715e"></span>			<span style="color:#a6e22e">ctx</span>:  <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithValue</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>(), <span style="color:#e6db74">&#34;key&#34;</span>, <span style="color:#e6db74">&#34;value&#34;</span>),
+		}
+		<span style="color:#a6e22e">workChan</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">work</span>
+	}
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">longLivedWorker</span>(<span style="color:#a6e22e">workChan</span> <span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">structWithCtx</span>) {
+
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">work</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">workChan</span> {
+        <span style="color:#75715e">// once through the channel, the context is retrieved,
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// then never referenced via struct again
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">ctx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">work</span>.<span style="color:#a6e22e">ctx</span>
+		<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">cancel</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithDeadline</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">100</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Millisecond</span>))
+		<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">cancel</span>()
+		<span style="color:#a6e22e">doWork</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">work</span>.<span style="color:#a6e22e">data</span>)
+	}
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doWork</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">data</span> <span style="color:#66d9ef">string</span>) {
+	<span style="color:#66d9ef">select</span> {
+	<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">After</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Duration</span>(<span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Intn</span>(<span style="color:#ae81ff">150</span>)) <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Millisecond</span>):
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;completed work &#39;%s&#39;\n&#34;</span>, <span style="color:#a6e22e">data</span>)
+	<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Done</span>():
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;quit&#34;</span>)
+	}
+}
+</code></pre></div><h2 id="leveraging-context-for-logging">Leveraging Context for Logging</h2>
+<p>Prelude: I hate logging frameworks.  It&rsquo;s the simplest of all problems: &ldquo;take this text, put it where I want you to&rdquo;.
+Developers apply all their theoretical computer science might to logging frameworks in the name of composability, simplification, portability, abstraction, etc&hellip;
+This usually means that users of the library have to wade through oblique abstractions and change their style to match the logging library.</p>
+<p>Let&rsquo;s make a logging framework.</p>
+<p>Create a package called <code>logger</code>.  It houses accessor methods for the actual logger.
+Inside the package, introduce a function called <code>Get</code>.  It has a parameter of a context, and returns the actual logger.
+The <code>Get</code> function will create and decorate a logger with the current context&rsquo;s request ID, then return the logger.
+Now you can trace events, along with any other arbitrary data stored in the context when logging</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">logger</span>
+
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">key</span> <span style="color:#66d9ef">struct</span>{}
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">inst</span> <span style="color:#a6e22e">key</span>
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Put</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">id</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithValue</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">inst</span>, <span style="color:#a6e22e">id</span>)
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Logger</span> { <span style="color:#75715e">// replace with your logging library of choice
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">id</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">inst</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">id</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;&#34;</span> {
+		<span style="color:#a6e22e">id</span> = <span style="color:#e6db74">&#34;undefined&#34;</span>
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Stdout</span>, <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;id: &#39;%s&#39;, &#34;</span>, <span style="color:#a6e22e">id</span>), <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">LstdFlags</span>)
+}
+</code></pre></div><p>Our code would look like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">DoSomething</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">e</span> <span style="color:#a6e22e">Event</span>) {
+   <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span>).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;starting to do something&#34;</span>)
+   <span style="color:#75715e">// or:
+</span><span style="color:#75715e"></span>   <span style="color:#a6e22e">log</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span>)
+   <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;starting to do something&#34;</span>)
+   <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#ae81ff">1</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>) <span style="color:#75715e">// doing something...
+</span><span style="color:#75715e"></span>   <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span>).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;did something!&#34;</span>)
+}
+</code></pre></div>
+
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/raidancampbell" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/@raidancampbell" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/r-aidan-campbell-73436a31" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="raidancampbell.com">R. Aidan Campbell</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2020
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="http://localhost:1313">raidancampbell</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="https://gohugo.io">Hugo v0.71.0</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="http://localhost:1313/js/main.js"></script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="http://localhost:1313/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+
