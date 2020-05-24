@@ -1,7 +1,7 @@
 ---
 title: "Design Considerations for Context in Go"
 date: 2020-05-22T14:58:47-07:00
-draft: true
+draft: false
 ---
 
 ## A brief introduction to Context
