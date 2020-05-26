@@ -6,10 +6,20 @@
     <description>Recent content in Posts on raidancampbell</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 May 2020 14:58:47 -0700</lastBuildDate>
+    <lastBuildDate>Mon, 25 May 2020 10:29:46 -0700</lastBuildDate>
     
 	<atom:link href="https://raidancampbell.com/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Abusing Context in Go Part I: Serialization</title>
+      <link>https://raidancampbell.com/posts/abusing-context-part-i/</link>
+      <pubDate>Mon, 25 May 2020 10:29:46 -0700</pubDate>
+      
+      <guid>https://raidancampbell.com/posts/abusing-context-part-i/</guid>
+      <description>At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the network must be able to be serialized and deserialized. Luckily, the Go standard library includes an encoding package, which handles most serialization use cases.
+For most use cases encoding data via JSON will work. JSON is a rock-solid &amp;ldquo;good enough&amp;rdquo; and ubiquitous solution.</description>
+    </item>
     
     <item>
       <title>Design Considerations for Context in Go</title>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Abusing Context in Go Part I: Serialization - raidancampbell</title>
+  <meta name="description" content="At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the network must be able to be serialized and deserialized. Luckily, the Go standard library includes an encoding package, which handles most serialization use cases.
+For most use cases encoding data via JSON will work. JSON is a rock-solid &ldquo;good enough&rdquo; and ubiquitous solution.">
+  <meta name="author" content="R. Aidan Campbell"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "raidancampbell",
+    
+    "url": "https:\/\/raidancampbell.com\/"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/raidancampbell.com\/"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/raidancampbell.com\/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/raidancampbell.com\/posts\/abusing-context-part-i\/",
+          "name": "Abusing context in go part i serialization"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "R. Aidan Campbell"
+  },
+  "headline": "Abusing Context in Go Part I: Serialization",
+  "description" : "At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the network must be able to be serialized and deserialized. Luckily, the Go standard library includes an encoding package, which handles most serialization use cases.\nFor most use cases encoding data via JSON will work. JSON is a rock-solid \x26ldquo;good enough\x26rdquo; and ubiquitous solution.",
+  "inLanguage" : "en",
+  "wordCount":  1349 ,
+  "datePublished" : "2020-05-25T10:29:46",
+  "dateModified" : "2020-05-25T10:29:46",
+  "image" : "https:\/\/raidancampbell.com\/",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "https:\/\/raidancampbell.com\/posts\/abusing-context-part-i\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/raidancampbell.com\/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/raidancampbell.com\/",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Abusing Context in Go Part I: Serialization" />
+<meta property="og:description" content="At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the network must be able to be serialized and deserialized. Luckily, the Go standard library includes an encoding package, which handles most serialization use cases.
+For most use cases encoding data via JSON will work. JSON is a rock-solid &ldquo;good enough&rdquo; and ubiquitous solution.">
+<meta property="og:url" content="https://raidancampbell.com/posts/abusing-context-part-i/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="raidancampbell" />
+
+  <meta name="twitter:title" content="Abusing Context in Go Part I: Serialization" />
+  <meta name="twitter:description" content="At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the …">
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@@raidancampbell" />
+  <meta name="twitter:creator" content="@@raidancampbell" />
+  <meta name="generator" content="Hugo 0.71.0" />
+  <link rel="alternate" href="https://raidancampbell.com/index.xml" type="application/rss+xml" title="raidancampbell"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://raidancampbell.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://raidancampbell.com/css/syntax.css" /><link rel="stylesheet" href="https://raidancampbell.com/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-62271915-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://raidancampbell.com/">raidancampbell</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="posts-heading">
+              
+                <h1>Abusing Context in Go Part I: Serialization</h1>
+              
+              
+                <hr class="small">
+              
+              
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>At the extreme end of microservice architecture, network communication becomes the substitution for function calls.
+This change forces many compromises in Go, mostly because everything sent across the network must be able to be serialized and deserialized.
+Luckily, the Go standard library includes an <a href="https://golang.org/pkg/encoding/"><code>encoding</code> package</a>, which handles most serialization use cases.</p>
+<p>For most use cases encoding data via JSON will work. JSON is a rock-solid &ldquo;good enough&rdquo; and ubiquitous solution.
+For less textbook scenarios, Go provides the convenient <a href="https://golang.org/pkg/encoding/gob/"><code>gob</code> encoder</a> to encode/decode structs.
+Gob&rsquo;s easy API comes with a few caveats: functions can&rsquo;t be serialized and unexported values must be <a href="https://golang.org/pkg/encoding/gob/#Register">&ldquo;registered&rdquo;</a>.</p>
+<p>These limitations add up to a death notice for Go&rsquo;s <a href="https://golang.org/pkg/context/">Context</a> library.
+Context is an interface which contains 4 unexported implementations under the hood: <a href="https://golang.org/src/context/context.go#L427">deadline</a>, <a href="https://golang.org/src/context/context.go#L232">cancel</a>, <a href="https://golang.org/src/context/context.go#L513">value</a>, and <a href="https://golang.org/src/context/context.go#L171">empty</a>.
+For more details on these implementations see an earlier post, <a href="/posts/context-in-go/">Design Considerations for Context in Go</a>.
+The constraints essentially boil down to serializing the <code>cancel()</code> function, and serializing/deserializing unexported values.</p>
+<p>In this thought exercise of an &ldquo;extreme microservice architecture&rdquo;, how would we allow context to flow through the network?
+Context is too complicated to store in JSON, but the cancellation functions and <code>valueCtx</code> keys make <code>gob</code> a poor choice as well.
+The best answer I came up with was to use <code>gob</code>, but manage the serialization/deserialization manually.
+It&rsquo;s worth mentioning that this solution is Not Safe For Production, but is interesting nonetheless.</p>
+<p>Using <code>gob</code> solves all the serialization issues, but leaves us with two problems: <code>gob</code> can&rsquo;t serialize functions, and <code>gob</code> can&rsquo;t serialize what it can&rsquo;t see.</p>
+<p>Context, at its core, can contain 3 things: a time (for <code>timerCtx</code>), a cancellation function (for <code>timerCtx</code> or <code>cancelCtx</code>), and &ldquo;anything&rdquo; (for <code>valueCtx</code>).
+We can get a lot further in our journey if we accept that the cancellation functions aren&rsquo;t special and can be recreated during deserialization.
+The next compromise is rougher: we won&rsquo;t allow functions in the <code>valueCtx</code>, meaning neither the key nor the value can be a <code>func</code>.
+It&rsquo;s not the worst compromise &ndash;I&rsquo;ve never seen functions stored in the context&ndash; but it&rsquo;s still a limitation.</p>
+<p>With these limitations we can now serialize and deserialize <code>timerCtx</code> and <code>cancelCtx</code> (<code>emptyCtx</code> is trivial).
+The flow would be:</p>
+<ol>
+<li>Receive an incoming context: use reflection to determine the concrete type</li>
+<li>If the type is <code>cancelCtx</code>, remember that we&rsquo;ll have to create a cancellation function during deserialization</li>
+<li>If the context is <code>timerCtx</code>, reach in and grab the <code>deadline</code> time.</li>
+<li>If we already have a <code>deadline</code> (remember, context is composed), choose the earliest of the existing and current</li>
+<li>Remember the <code>deadline</code> for deserialization</li>
+<li>If the context has a parent context, use it to recurse upwards in the context stack</li>
+<li>Create our own struct to house the deadline time and cancellation func.  This is what actually gets serialized.</li>
+<li>Serialize this struct across the wire, and receive it on the other side</li>
+<li>At deserialization, we know we need to create a <code>timerCtx</code> and cancellation function, so we create them</li>
+</ol>
+<p>Or, in code:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> (
+	<span style="color:#a6e22e">cancCtxTyp</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Type</span>
+	<span style="color:#a6e22e">timeCtxTyp</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Type</span>
+)
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
+	<span style="color:#75715e">// these are used as constants for type comparison.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// unfortunately we need to access them via reflection, so an init function is required
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">cancCtx</span>, <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithCancel</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>())
+	<span style="color:#a6e22e">c</span>() <span style="color:#75715e">// immediately cancel to prevent resource leaks
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">cancCtxTyp</span> = <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">ValueOf</span>(<span style="color:#a6e22e">cancCtx</span>).<span style="color:#a6e22e">Elem</span>().<span style="color:#a6e22e">Type</span>()
+	<span style="color:#a6e22e">timeCtx</span>, <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithDeadline</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>(), <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>{})
+	<span style="color:#a6e22e">c</span>()
+	<span style="color:#a6e22e">timeCtxTyp</span> = <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">ValueOf</span>(<span style="color:#a6e22e">timeCtx</span>).<span style="color:#a6e22e">Elem</span>().<span style="color:#a6e22e">Type</span>()
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">buildMap</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">s</span> <span style="color:#a6e22e">contextData</span>) <span style="color:#a6e22e">contextData</span> {
+	<span style="color:#a6e22e">rs</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">ValueOf</span>(<span style="color:#a6e22e">ctx</span>).<span style="color:#a6e22e">Elem</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">Type</span>() <span style="color:#f92672">==</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">ValueOf</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>()).<span style="color:#a6e22e">Elem</span>().<span style="color:#a6e22e">Type</span>() {
+		<span style="color:#75715e">// base case: if the current context is an emptyCtx, we&#39;re done.
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">s</span>
+	}
+	<span style="color:#a6e22e">rf</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">FieldByName</span>(<span style="color:#e6db74">&#34;key&#34;</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">rf</span>.<span style="color:#a6e22e">IsValid</span>() { <span style="color:#75715e">// if there&#39;s a key, it&#39;s a valueCtx
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">// TODO
+</span><span style="color:#75715e"></span>	} <span style="color:#66d9ef">else</span> { <span style="color:#75715e">// it&#39;s either a cancelCtx or timerCtx
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">Type</span>() <span style="color:#f92672">==</span> <span style="color:#a6e22e">cancCtxTyp</span> {
+			<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">HasCancel</span> = <span style="color:#66d9ef">true</span>
+		}
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">Type</span>() <span style="color:#f92672">==</span> <span style="color:#a6e22e">timeCtxTyp</span> {
+			<span style="color:#75715e">// if there&#39;s multiple deadlines in a context, choose the earliest
+</span><span style="color:#75715e"></span>			<span style="color:#a6e22e">deadline</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">FieldByName</span>(<span style="color:#e6db74">&#34;deadline&#34;</span>)
+			<span style="color:#a6e22e">deadline</span> = <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">NewAt</span>(<span style="color:#a6e22e">deadline</span>.<span style="color:#a6e22e">Type</span>(), <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(<span style="color:#a6e22e">deadline</span>.<span style="color:#a6e22e">UnsafeAddr</span>())).<span style="color:#a6e22e">Elem</span>()
+			<span style="color:#a6e22e">deadlineTime</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">deadline</span>.<span style="color:#a6e22e">Convert</span>(<span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">TypeOf</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>{})).<span style="color:#a6e22e">Interface</span>().(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>)
+			<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">HasDeadline</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">deadlineTime</span>.<span style="color:#a6e22e">Before</span>(<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">Deadline</span>) {
+				<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">Deadline</span> = <span style="color:#a6e22e">deadlineTime</span>
+			} <span style="color:#66d9ef">else</span> {
+				<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">HasDeadline</span> = <span style="color:#66d9ef">true</span>
+				<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">Deadline</span> = <span style="color:#a6e22e">deadlineTime</span>
+			}
+		}
+	}
+	<span style="color:#a6e22e">parent</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">FieldByName</span>(<span style="color:#e6db74">&#34;Context&#34;</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">parent</span>.<span style="color:#a6e22e">IsValid</span>() <span style="color:#f92672">&amp;&amp;</span> !<span style="color:#a6e22e">parent</span>.<span style="color:#a6e22e">IsNil</span>() {
+		<span style="color:#75715e">// if there&#39;s a parent context, recurse
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">buildMap</span>(<span style="color:#a6e22e">parent</span>.<span style="color:#a6e22e">Interface</span>().(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>), <span style="color:#a6e22e">s</span>)
+	}
+	<span style="color:#75715e">// not possible, but the compiler requires it.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// the parent context would be empty, and is caught in the beginning
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">s</span>
+}
+</code></pre></div><p>There&rsquo;s a couple of limitations that should be immediately obvious:</p>
+<ul>
+<li>Time is approximate at best between any two computers</li>
+<li>Context is flattened during serialization, nothing pre-serialization can be popped off post-serialization</li>
+</ul>
+<p>For the purposes of this exercise, I&rsquo;m calling these acceptable.</p>
+<p>At this point we can move deadline and cancellation contexts across the network, but they&rsquo;re easy.
+Moving a value context across the network is more difficult: we need to serialize unknown data. Luckily, <code>gob</code> handles this!</p>
+<p>This brings us to the final limitation of this solution: unexported struct types can&rsquo;t be passed through with <code>gob</code>.
+More accurately they <em>can</em> be serialized, but deserialization will fail.
+<code>gob</code> provides a <a href="https://golang.org/pkg/encoding/gob/#Register">register function</a> to &ldquo;register&rdquo; an arbitrary type for serialization.
+We can get <code>gob</code> any unexported data, and <code>gob</code> will happily serialize it.  The problem comes during deserialization.
+At deserialization, <code>gob</code> would need the same types registered, but I know of no way to transmit the type information.
+Even if we could transmit it, the receiving-side would need to have the type imported somewhere at compile-time.</p>
+<p>The above limitation isn&rsquo;t as severe as it may sound.  It limits scenarios like:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">key</span> <span style="color:#66d9ef">struct</span>{}
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">k</span> <span style="color:#a6e22e">key</span>{}
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">createCtx</span>(<span style="color:#a6e22e">val</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithValue</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>(), <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">val</span>)
+}
+</code></pre></div><p>since the information about the <code>key</code> type isn&rsquo;t known to the receiving side.
+Having a known set of context types (in something like a shared library) would solve this: each type just needs to be registered with <code>gob</code>.
+The workaround for this, however, is to keep context keys as unexported, but their types should be primitive.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">k</span> = <span style="color:#e6db74">&#34;I&#39;m the unique key&#34;</span>
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">createCtx</span>(<span style="color:#a6e22e">val</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithValue</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>(), <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">val</span>)
+}
+</code></pre></div><p>This same type limitation extends to the value: unexported types won&rsquo;t work.</p>
+<p>Using all this, we can fill out the <code>TODO</code> portion of the above example and arrive at the below</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> (
+	<span style="color:#a6e22e">cancCtxTyp</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Type</span>
+	<span style="color:#a6e22e">timeCtxTyp</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Type</span>
+)
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
+	<span style="color:#75715e">// these are used as constants for type comparison.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// unfortunately we need to access them via reflection, so an init function is required
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">cancCtx</span>, <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithCancel</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>())
+	<span style="color:#a6e22e">c</span>() <span style="color:#75715e">// immediately cancel to prevent resource leaks
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">cancCtxTyp</span> = <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">ValueOf</span>(<span style="color:#a6e22e">cancCtx</span>).<span style="color:#a6e22e">Elem</span>().<span style="color:#a6e22e">Type</span>()
+	<span style="color:#a6e22e">timeCtx</span>, <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithDeadline</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>(), <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>{})
+	<span style="color:#a6e22e">c</span>()
+	<span style="color:#a6e22e">timeCtxTyp</span> = <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">ValueOf</span>(<span style="color:#a6e22e">timeCtx</span>).<span style="color:#a6e22e">Elem</span>().<span style="color:#a6e22e">Type</span>()
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">buildMap</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">s</span> <span style="color:#a6e22e">contextData</span>) <span style="color:#a6e22e">contextData</span> {
+	<span style="color:#a6e22e">rs</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">ValueOf</span>(<span style="color:#a6e22e">ctx</span>).<span style="color:#a6e22e">Elem</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">Type</span>() <span style="color:#f92672">==</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">ValueOf</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>()).<span style="color:#a6e22e">Elem</span>().<span style="color:#a6e22e">Type</span>() {
+		<span style="color:#75715e">// base case: if the current context is an emptyCtx, we&#39;re done.
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">s</span>
+	}
+	<span style="color:#a6e22e">rf</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">FieldByName</span>(<span style="color:#e6db74">&#34;key&#34;</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">rf</span>.<span style="color:#a6e22e">IsValid</span>() { <span style="color:#75715e">// if there&#39;s a key, it&#39;s a valueCtx
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">// make the key field read+write
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">rf</span> = <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">NewAt</span>(<span style="color:#a6e22e">rf</span>.<span style="color:#a6e22e">Type</span>(), <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(<span style="color:#a6e22e">rf</span>.<span style="color:#a6e22e">UnsafeAddr</span>())).<span style="color:#a6e22e">Elem</span>()
+
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">rf</span>.<span style="color:#a6e22e">CanInterface</span>() { <span style="color:#75715e">// panic-protection
+</span><span style="color:#75715e"></span>			<span style="color:#a6e22e">key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rf</span>.<span style="color:#a6e22e">Interface</span>()
+
+			<span style="color:#75715e">// grab the val field, make it read+write
+</span><span style="color:#75715e"></span>			<span style="color:#a6e22e">rv</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">FieldByName</span>(<span style="color:#e6db74">&#34;val&#34;</span>)
+			<span style="color:#a6e22e">rv</span> = <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">NewAt</span>(<span style="color:#a6e22e">rv</span>.<span style="color:#a6e22e">Type</span>(), <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(<span style="color:#a6e22e">rv</span>.<span style="color:#a6e22e">UnsafeAddr</span>())).<span style="color:#a6e22e">Elem</span>()
+			<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">rv</span>.<span style="color:#a6e22e">CanInterface</span>() {
+				<span style="color:#a6e22e">val</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rv</span>.<span style="color:#a6e22e">Interface</span>()
+				<span style="color:#75715e">// only add the key if it doesn&#39;t exist.  nested contexts can have the same keys
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// but the concept is lost after serialization: you can&#39;t drop things off the stack
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// to the same layer as pre-serialization
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// we&#39;re recursing up the stack, so the first instance of the key is the one we want
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">exists</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">Values</span>[<span style="color:#a6e22e">key</span>]; !<span style="color:#a6e22e">exists</span> {
+					<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">Values</span>[<span style="color:#a6e22e">key</span>] = <span style="color:#a6e22e">val</span>
+					<span style="color:#75715e">// register them for serialization
+</span><span style="color:#75715e"></span>					<span style="color:#a6e22e">gob</span>.<span style="color:#a6e22e">Register</span>(<span style="color:#a6e22e">key</span>)
+					<span style="color:#a6e22e">gob</span>.<span style="color:#a6e22e">Register</span>(<span style="color:#a6e22e">val</span>)
+				}
+			}
+		}
+	} <span style="color:#66d9ef">else</span> { <span style="color:#75715e">// it&#39;s either a cancelCtx or timerCtx
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">Type</span>() <span style="color:#f92672">==</span> <span style="color:#a6e22e">cancCtxTyp</span> {
+			<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">HasCancel</span> = <span style="color:#66d9ef">true</span>
+		}
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">Type</span>() <span style="color:#f92672">==</span> <span style="color:#a6e22e">timeCtxTyp</span> {
+			<span style="color:#75715e">// if there&#39;s multiple deadlines in a context, choose the earliest
+</span><span style="color:#75715e"></span>			<span style="color:#a6e22e">deadline</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">FieldByName</span>(<span style="color:#e6db74">&#34;deadline&#34;</span>)
+			<span style="color:#a6e22e">deadline</span> = <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">NewAt</span>(<span style="color:#a6e22e">deadline</span>.<span style="color:#a6e22e">Type</span>(), <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(<span style="color:#a6e22e">deadline</span>.<span style="color:#a6e22e">UnsafeAddr</span>())).<span style="color:#a6e22e">Elem</span>()
+			<span style="color:#a6e22e">deadlineTime</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">deadline</span>.<span style="color:#a6e22e">Convert</span>(<span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">TypeOf</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>{})).<span style="color:#a6e22e">Interface</span>().(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>)
+			<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">HasDeadline</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">deadlineTime</span>.<span style="color:#a6e22e">Before</span>(<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">Deadline</span>) {
+				<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">Deadline</span> = <span style="color:#a6e22e">deadlineTime</span>
+			} <span style="color:#66d9ef">else</span> {
+				<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">HasDeadline</span> = <span style="color:#66d9ef">true</span>
+				<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">Deadline</span> = <span style="color:#a6e22e">deadlineTime</span>
+			}
+		}
+	}
+	<span style="color:#a6e22e">parent</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rs</span>.<span style="color:#a6e22e">FieldByName</span>(<span style="color:#e6db74">&#34;Context&#34;</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">parent</span>.<span style="color:#a6e22e">IsValid</span>() <span style="color:#f92672">&amp;&amp;</span> !<span style="color:#a6e22e">parent</span>.<span style="color:#a6e22e">IsNil</span>() {
+		<span style="color:#75715e">// if there&#39;s a parent context, recurse
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">buildMap</span>(<span style="color:#a6e22e">parent</span>.<span style="color:#a6e22e">Interface</span>().(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>), <span style="color:#a6e22e">s</span>)
+	}
+	<span style="color:#75715e">// not possible, but the compiler requires it.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// the parent context would be empty, and is caught in the beginning
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">s</span>
+}
+</code></pre></div><p>The code is <a href="https://github.com/raidancampbell/libraidan/">available in <code>libraidan</code></a> as <a href="https://godoc.org/github.com/raidancampbell/libraidan/pkg/rruntime#SerializeCtx"><code>SerializeCtx</code></a></p>
+
+
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://raidancampbell.com/posts/context-in-go/" data-toggle="tooltip" data-placement="top" title="Design Considerations for Context in Go">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/raidancampbell" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/@raidancampbell" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/r-aidan-campbell-73436a31" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="raidancampbell.com">R. Aidan Campbell</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2020
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://raidancampbell.com/">raidancampbell</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="https://gohugo.io">Hugo v0.71.0</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://raidancampbell.com/js/main.js"></script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://raidancampbell.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+
