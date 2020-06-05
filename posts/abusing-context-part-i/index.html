@@ -8,8 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
   <title>Abusing Context in Go Part I: Serialization - raidancampbell</title>
-  <meta name="description" content="At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the network must be able to be serialized and deserialized. Luckily, the Go standard library includes an encoding package, which handles most serialization use cases.
-For most use cases encoding data via JSON will work. JSON is a rock-solid &ldquo;good enough&rdquo; and ubiquitous solution.">
+  <meta name="description" content="A method for serializing context to allow it to flow between networked hosts">
   <meta name="author" content="R. Aidan Campbell"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -58,7 +57,7 @@ For most use cases encoding data via JSON will work. JSON is a rock-solid &ldquo
     "name" : "R. Aidan Campbell"
   },
   "headline": "Abusing Context in Go Part I: Serialization",
-  "description" : "At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the network must be able to be serialized and deserialized. Luckily, the Go standard library includes an encoding package, which handles most serialization use cases.\nFor most use cases encoding data via JSON will work. JSON is a rock-solid \x26ldquo;good enough\x26rdquo; and ubiquitous solution.",
+  "description" : "A method for serializing context to allow it to flow between networked hosts",
   "inLanguage" : "en",
   "wordCount":  1349 ,
   "datePublished" : "2020-05-25T10:29:46",
@@ -80,14 +79,13 @@ For most use cases encoding data via JSON will work. JSON is a rock-solid &ldquo
 </script>
 
 <meta property="og:title" content="Abusing Context in Go Part I: Serialization" />
-<meta property="og:description" content="At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the network must be able to be serialized and deserialized. Luckily, the Go standard library includes an encoding package, which handles most serialization use cases.
-For most use cases encoding data via JSON will work. JSON is a rock-solid &ldquo;good enough&rdquo; and ubiquitous solution.">
+<meta property="og:description" content="A method for serializing context to allow it to flow between networked hosts">
 <meta property="og:url" content="https://raidancampbell.com/posts/abusing-context-part-i/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="raidancampbell" />
 
   <meta name="twitter:title" content="Abusing Context in Go Part I: Serialization" />
-  <meta name="twitter:description" content="At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the …">
+  <meta name="twitter:description" content="A method for serializing context to allow it to flow between networked hosts">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@@raidancampbell" />
   <meta name="twitter:creator" content="@@raidancampbell" />
@@ -439,7 +437,7 @@ The workaround for this, however, is to keep context keys as unexported, but the
           
           
             <li class="next">
-              <a href="https://raidancampbell.com/posts/abusing-context-part-ii/" data-toggle="tooltip" data-placement="top" title="Abusing Context Part II: Recovery">Next Post &rarr;</a>
+              <a href="https://raidancampbell.com/posts/abusing-context-part-ii/" data-toggle="tooltip" data-placement="top" title="Abusing Context in Go Part II: Recovery">Next Post &rarr;</a>
             </li>
           
         </ul>

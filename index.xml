@@ -12,13 +12,12 @@
     
     
     <item>
-      <title>Abusing Context Part II: Recovery</title>
+      <title>Abusing Context in Go Part II: Recovery</title>
       <link>https://raidancampbell.com/posts/abusing-context-part-ii/</link>
       <pubDate>Thu, 04 Jun 2020 16:31:47 -0700</pubDate>
       
       <guid>https://raidancampbell.com/posts/abusing-context-part-ii/</guid>
-      <description>While not required, it&amp;rsquo;s highly recommended that you read Dave Cheney&amp;rsquo;s post on Dynamically Scoped Variables before continuing.
-What and Why?  Consider an instance of context.Context as it flows through the code. Typically it&amp;rsquo;s created at the beginning of a transaction and enriched or referenced throughout the transaction. Sometimes it&amp;rsquo;s not passed everywhere &amp;ndash; it certainly doesn&amp;rsquo;t need to be. Consider a scenario where you have an encryption library and it contains a simple function AESEncrypt:</description>
+      <description>A method for recovering context in Go that was omitted somewhere up the callstack</description>
     </item>
     
     <item>
@@ -27,8 +26,7 @@ What and Why?  Consider an instance of context.Context as it flows through the c
       <pubDate>Mon, 25 May 2020 10:29:46 -0700</pubDate>
       
       <guid>https://raidancampbell.com/posts/abusing-context-part-i/</guid>
-      <description>At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the network must be able to be serialized and deserialized. Luckily, the Go standard library includes an encoding package, which handles most serialization use cases.
-For most use cases encoding data via JSON will work. JSON is a rock-solid &amp;ldquo;good enough&amp;rdquo; and ubiquitous solution.</description>
+      <description>A method for serializing context to allow it to flow between networked hosts</description>
     </item>
     
     <item>
@@ -37,9 +35,7 @@ For most use cases encoding data via JSON will work. JSON is a rock-solid &amp;l
       <pubDate>Fri, 22 May 2020 14:58:47 -0700</pubDate>
       
       <guid>https://raidancampbell.com/posts/context-in-go/</guid>
-      <description>A brief introduction to Context  &amp;ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between processes.&amp;rdquo; - golang.org
- Context in Go is often critiqued for handling two distinct scenarios under one tool: cancellation and scoped data. While I tend to agree, this post is aimed to inform rather than persuade.
-Contexts are derived: each child context is made by adding additional cancellations or values from its parent.</description>
+      <description>An overview on design paradigms for golang&amp;rsquo;s context library</description>
     </item>
     
   </channel>

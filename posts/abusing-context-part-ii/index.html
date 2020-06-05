@@ -7,9 +7,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Abusing Context Part II: Recovery - raidancampbell</title>
-  <meta name="description" content="While not required, it&rsquo;s highly recommended that you read Dave Cheney&rsquo;s post on Dynamically Scoped Variables before continuing.
-What and Why?  Consider an instance of context.Context as it flows through the code. Typically it&rsquo;s created at the beginning of a transaction and enriched or referenced throughout the transaction. Sometimes it&rsquo;s not passed everywhere &ndash; it certainly doesn&rsquo;t need to be. Consider a scenario where you have an encryption library and it contains a simple function AESEncrypt:">
+  <title>Abusing Context in Go Part II: Recovery - raidancampbell</title>
+  <meta name="description" content="A method for recovering context in Go that was omitted somewhere up the callstack">
   <meta name="author" content="R. Aidan Campbell"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -46,7 +45,7 @@ What and Why?  Consider an instance of context.Context as it flows through the c
         "position": 3,
         "item": {
           "@id": "https:\/\/raidancampbell.com\/posts\/abusing-context-part-ii\/",
-          "name": "Abusing context part i i recovery"
+          "name": "Abusing context in go part i i recovery"
         }
     }]
 }
@@ -57,8 +56,8 @@ What and Why?  Consider an instance of context.Context as it flows through the c
   "author": {
     "name" : "R. Aidan Campbell"
   },
-  "headline": "Abusing Context Part II: Recovery",
-  "description" : "While not required, it\x26rsquo;s highly recommended that you read Dave Cheney\x26rsquo;s post on Dynamically Scoped Variables before continuing.\nWhat and Why?  Consider an instance of context.Context as it flows through the code. Typically it\x26rsquo;s created at the beginning of a transaction and enriched or referenced throughout the transaction. Sometimes it\x26rsquo;s not passed everywhere \x26ndash; it certainly doesn\x26rsquo;t need to be. Consider a scenario where you have an encryption library and it contains a simple function AESEncrypt:",
+  "headline": "Abusing Context in Go Part II: Recovery",
+  "description" : "A method for recovering context in Go that was omitted somewhere up the callstack",
   "inLanguage" : "en",
   "wordCount":  1989 ,
   "datePublished" : "2020-06-04T16:31:47",
@@ -79,16 +78,14 @@ What and Why?  Consider an instance of context.Context as it flows through the c
 }
 </script>
 
-<meta property="og:title" content="Abusing Context Part II: Recovery" />
-<meta property="og:description" content="While not required, it&rsquo;s highly recommended that you read Dave Cheney&rsquo;s post on Dynamically Scoped Variables before continuing.
-What and Why?  Consider an instance of context.Context as it flows through the code. Typically it&rsquo;s created at the beginning of a transaction and enriched or referenced throughout the transaction. Sometimes it&rsquo;s not passed everywhere &ndash; it certainly doesn&rsquo;t need to be. Consider a scenario where you have an encryption library and it contains a simple function AESEncrypt:">
+<meta property="og:title" content="Abusing Context in Go Part II: Recovery" />
+<meta property="og:description" content="A method for recovering context in Go that was omitted somewhere up the callstack">
 <meta property="og:url" content="https://raidancampbell.com/posts/abusing-context-part-ii/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="raidancampbell" />
 
-  <meta name="twitter:title" content="Abusing Context Part II: Recovery" />
-  <meta name="twitter:description" content="While not required, it&rsquo;s highly recommended that you read Dave Cheney&rsquo;s post on Dynamically Scoped Variables before continuing.
-What and Why?  Consider an instance of context.Context as it …">
+  <meta name="twitter:title" content="Abusing Context in Go Part II: Recovery" />
+  <meta name="twitter:description" content="A method for recovering context in Go that was omitted somewhere up the callstack">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@@raidancampbell" />
   <meta name="twitter:creator" content="@@raidancampbell" />
@@ -217,7 +214,7 @@ if (!doNotTrack) {
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="posts-heading">
               
-                <h1>Abusing Context Part II: Recovery</h1>
+                <h1>Abusing Context in Go Part II: Recovery</h1>
               
               
                 <hr class="small">

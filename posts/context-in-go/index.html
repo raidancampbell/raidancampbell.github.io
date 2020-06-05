@@ -8,9 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
   <title>Design Considerations for Context in Go - raidancampbell</title>
-  <meta name="description" content="A brief introduction to Context  &ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between processes.&rdquo; - golang.org
- Context in Go is often critiqued for handling two distinct scenarios under one tool: cancellation and scoped data. While I tend to agree, this post is aimed to inform rather than persuade.
-Contexts are derived: each child context is made by adding additional cancellations or values from its parent.">
+  <meta name="description" content="An overview on design paradigms for golang&rsquo;s context library">
   <meta name="author" content="R. Aidan Campbell"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -59,7 +57,7 @@ Contexts are derived: each child context is made by adding additional cancellati
     "name" : "R. Aidan Campbell"
   },
   "headline": "Design Considerations for Context in Go",
-  "description" : "A brief introduction to Context  \x26ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between processes.\x26rdquo; - golang.org\n Context in Go is often critiqued for handling two distinct scenarios under one tool: cancellation and scoped data. While I tend to agree, this post is aimed to inform rather than persuade.\nContexts are derived: each child context is made by adding additional cancellations or values from its parent.",
+  "description" : "An overview on design paradigms for golang\x26rsquo;s context library",
   "inLanguage" : "en",
   "wordCount":  1097 ,
   "datePublished" : "2020-05-22T14:58:47",
@@ -81,15 +79,13 @@ Contexts are derived: each child context is made by adding additional cancellati
 </script>
 
 <meta property="og:title" content="Design Considerations for Context in Go" />
-<meta property="og:description" content="A brief introduction to Context  &ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between processes.&rdquo; - golang.org
- Context in Go is often critiqued for handling two distinct scenarios under one tool: cancellation and scoped data. While I tend to agree, this post is aimed to inform rather than persuade.
-Contexts are derived: each child context is made by adding additional cancellations or values from its parent.">
+<meta property="og:description" content="An overview on design paradigms for golang&rsquo;s context library">
 <meta property="og:url" content="https://raidancampbell.com/posts/context-in-go/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="raidancampbell" />
 
   <meta name="twitter:title" content="Design Considerations for Context in Go" />
-  <meta name="twitter:description" content="A brief introduction to Context  &ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between …">
+  <meta name="twitter:description" content="An overview on design paradigms for golang&rsquo;s context library">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@@raidancampbell" />
   <meta name="twitter:creator" content="@@raidancampbell" />
