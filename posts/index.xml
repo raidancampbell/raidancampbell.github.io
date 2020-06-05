@@ -6,10 +6,20 @@
     <description>Recent content in Posts on raidancampbell</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 25 May 2020 10:29:46 -0700</lastBuildDate>
+    <lastBuildDate>Thu, 04 Jun 2020 16:31:47 -0700</lastBuildDate>
     
 	<atom:link href="https://raidancampbell.com/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Abusing Context Part II: Recovery</title>
+      <link>https://raidancampbell.com/posts/abusing-context-part-ii/</link>
+      <pubDate>Thu, 04 Jun 2020 16:31:47 -0700</pubDate>
+      
+      <guid>https://raidancampbell.com/posts/abusing-context-part-ii/</guid>
+      <description>While not required, it&amp;rsquo;s highly recommended that you read Dave Cheney&amp;rsquo;s post on Dynamically Scoped Variables before continuing.
+What and Why?  Consider an instance of context.Context as it flows through the code. Typically it&amp;rsquo;s created at the beginning of a transaction and enriched or referenced throughout the transaction. Sometimes it&amp;rsquo;s not passed everywhere &amp;ndash; it certainly doesn&amp;rsquo;t need to be. Consider a scenario where you have an encryption library and it contains a simple function AESEncrypt:</description>
+    </item>
     
     <item>
       <title>Abusing Context in Go Part I: Serialization</title>

@@ -192,6 +192,40 @@ if (!doNotTrack) {
           
           
             <article class="post-preview">
+    <a href="https://raidancampbell.com/posts/abusing-context-part-ii/">
+        <h2 class="post-title">Abusing Context Part II: Recovery</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-06-04
+  
+  
+  
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+            While not required, it&rsquo;s highly recommended that you read Dave Cheney&rsquo;s post on Dynamically Scoped Variables before continuing.
+What and Why?  Consider an instance of context.Context as it flows through the code. Typically it&rsquo;s created at the beginning of a transaction and enriched or referenced throughout the transaction. Sometimes it&rsquo;s not passed everywhere &ndash; it certainly doesn&rsquo;t need to be. Consider a scenario where you have an encryption library and it contains a simple function AESEncrypt:
+        
+    </div>
+
+    
+
+</article>
+
+          
+            <article class="post-preview">
     <a href="https://raidancampbell.com/posts/abusing-context-part-i/">
         <h2 class="post-title">Abusing Context in Go Part I: Serialization</h2>
         
@@ -215,15 +249,15 @@ if (!doNotTrack) {
     </p>
     <div class="post-entry">
         
-        At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the network must be able to be serialized and deserialized. Luckily, the Go standard library includes an encoding package, which handles most serialization use cases.
+            At the extreme end of microservice architecture, network communication becomes the substitution for function calls. This change forces many compromises in Go, mostly because everything sent across the network must be able to be serialized and deserialized. Luckily, the Go standard library includes an encoding package, which handles most serialization use cases.
 For most use cases encoding data via JSON will work. JSON is a rock-solid &ldquo;good enough&rdquo; and ubiquitous solution.
-        <a href="https://raidancampbell.com/posts/abusing-context-part-i/" class="post-read-more">[Read More]</a>
         
     </div>
 
     
 
 </article>
+
           
             <article class="post-preview">
     <a href="https://raidancampbell.com/posts/context-in-go/">
@@ -249,16 +283,16 @@ For most use cases encoding data via JSON will work. JSON is a rock-solid &ldquo
     </p>
     <div class="post-entry">
         
-        A brief introduction to Context  &ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between processes.&rdquo; - golang.org
+            A brief introduction to Context  &ldquo;Package context defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between processes.&rdquo; - golang.org
  Context in Go is often critiqued for handling two distinct scenarios under one tool: cancellation and scoped data. While I tend to agree, this post is aimed to inform rather than persuade.
 Contexts are derived: each child context is made by adding additional cancellations or values from its parent.
-        <a href="https://raidancampbell.com/posts/context-in-go/" class="post-read-more">[Read More]</a>
         
     </div>
 
     
 
 </article>
+
           
         </div>
 
