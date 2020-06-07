@@ -6,10 +6,19 @@
     <description>Recent content in Posts on raidancampbell</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 04 Jun 2020 16:31:47 -0700</lastBuildDate>
+    <lastBuildDate>Sat, 06 Jun 2020 23:30:51 -0700</lastBuildDate>
     
 	<atom:link href="https://raidancampbell.com/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Instrumenting Go Binaries for Integration Test Coverage</title>
+      <link>https://raidancampbell.com/posts/runtime-instrumentation/</link>
+      <pubDate>Sat, 06 Jun 2020 23:30:51 -0700</pubDate>
+      
+      <guid>https://raidancampbell.com/posts/runtime-instrumentation/</guid>
+      <description>An approach for measuring coverage of integration or manual testing</description>
+    </item>
     
     <item>
       <title>Abusing Context in Go Part II: Recovery</title>
