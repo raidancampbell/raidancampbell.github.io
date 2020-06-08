@@ -7,7 +7,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Posts - raidancampbell</title>
+  <title>Low Effort Blog Posts Part I: DNS Sinkholing - raidancampbell</title>
+  <meta name="description" content="What I want my laptop to route certain requests differently on my home network, and prevent them on public networks.
+Why I wanted to try this syslog thing, but didn&rsquo;t like the idea of hardcoding a local IP. Even within the 192.168.0.0/16 block, switching wifi networks (e.g. going to a coffee shop) would mean my laptop would try and send logs to the configured IP. No good.
+How Configure your router to resolve something like sinkhole.">
   <meta name="author" content="R. Aidan Campbell"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -28,13 +31,66 @@
   
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/raidancampbell.com\/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/raidancampbell.com\/posts\/low-effort-i-dns-sinkholing\/",
+          "name": "Low effort blog posts part i d n s sinkholing"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "R. Aidan Campbell"
+  },
+  "headline": "Low Effort Blog Posts Part I: DNS Sinkholing",
+  "description" : "What I want my laptop to route certain requests differently on my home network, and prevent them on public networks.\nWhy I wanted to try this syslog thing, but didn\x26rsquo;t like the idea of hardcoding a local IP. Even within the 192.168.0.0\/16 block, switching wifi networks (e.g. going to a coffee shop) would mean my laptop would try and send logs to the configured IP. No good.\nHow Configure your router to resolve something like sinkhole.",
+  "inLanguage" : "en",
+  "wordCount":  152 ,
+  "datePublished" : "2020-06-07T21:58:09",
+  "dateModified" : "2020-06-07T21:58:09",
+  "image" : "https:\/\/raidancampbell.com\/",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "https:\/\/raidancampbell.com\/posts\/low-effort-i-dns-sinkholing\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/raidancampbell.com\/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/raidancampbell.com\/",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
 
-<meta property="og:title" content="Posts" />
-<meta property="og:url" content="https://raidancampbell.com/posts/" />
+<meta property="og:title" content="Low Effort Blog Posts Part I: DNS Sinkholing" />
+<meta property="og:description" content="What I want my laptop to route certain requests differently on my home network, and prevent them on public networks.
+Why I wanted to try this syslog thing, but didn&rsquo;t like the idea of hardcoding a local IP. Even within the 192.168.0.0/16 block, switching wifi networks (e.g. going to a coffee shop) would mean my laptop would try and send logs to the configured IP. No good.
+How Configure your router to resolve something like sinkhole.">
+<meta property="og:url" content="https://raidancampbell.com/posts/low-effort-i-dns-sinkholing/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="raidancampbell" />
 
-  <meta name="twitter:title" content="Posts" />
+  <meta name="twitter:title" content="Low Effort Blog Posts Part I: DNS Sinkholing" />
+  <meta name="twitter:description" content="What I want my laptop to route certain requests differently on my home network, and prevent them on public networks.
+Why I wanted to try this syslog thing, but didn&rsquo;t like the idea of hardcoding …">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@@raidancampbell" />
   <meta name="twitter:creator" content="@@raidancampbell" />
@@ -163,7 +219,7 @@ if (!doNotTrack) {
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="posts-heading">
               
-                <h1>Posts</h1>
+                <h1>Low Effort Blog Posts Part I: DNS Sinkholing</h1>
               
               
                 <hr class="small">
@@ -179,194 +235,48 @@ if (!doNotTrack) {
 
 
     
-  <div class="container" role="main">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <h1 id="what">What</h1>
+<p>I want my laptop to route certain requests differently on my home network, and prevent them on public networks.</p>
+<h1 id="why">Why</h1>
+<p>I wanted to try this <a href="https://en.wikipedia.org/wiki/Syslog">syslog</a> thing, but didn&rsquo;t like the idea of hardcoding a local IP.
+Even within the <code>192.168.0.0/16</code> block, switching wifi networks (e.g. going to a coffee shop) would mean my laptop would try and send logs to the configured IP.  No good.</p>
+<h1 id="how">How</h1>
+<p>Configure your router to resolve something like <code>sinkhole.mydomain.com</code> to your desired server.
+In my case, this was the syslog server I kept on my home network within the <code>192.16.0.0/16</code> block.
+Additionally, configure <code>sinkhole.mydomain.com</code> to <code>127.0.0.1</code> (or anything in the <code>127.0.0.0/8</code> block).
+This way requests are successful, but your data never leaves your laptop.
+Requests to <code>sinkhole.mydomain.com</code> will continue to fail until you&rsquo;re back on your home network.
+Most modern operating systems will flush the DNS cache when switching networks, making any caching a non-issue.</p>
+
+
         
-        <div class="posts-list">
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
           
-            <article class="post-preview">
-    <a href="https://raidancampbell.com/posts/low-effort-i-dns-sinkholing/">
-        <h2 class="post-title">Low Effort Blog Posts Part I: DNS Sinkholing</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-06-07
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;minutes
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-            What I want my laptop to route certain requests differently on my home network, and prevent them on public networks.
-Why I wanted to try this syslog thing, but didn&rsquo;t like the idea of hardcoding a local IP. Even within the 192.168.0.0/16 block, switching wifi networks (e.g. going to a coffee shop) would mean my laptop would try and send logs to the configured IP. No good.
-How Configure your router to resolve something like sinkhole.
-        
-    </div>
-
-    
-
-</article>
-
+            <li class="previous">
+              <a href="https://raidancampbell.com/posts/runtime-instrumentation/" data-toggle="tooltip" data-placement="top" title="Instrumenting Go Binaries for Integration Test Coverage">&larr; Previous Post</a>
+            </li>
           
-            <article class="post-preview">
-    <a href="https://raidancampbell.com/posts/runtime-instrumentation/">
-        <h2 class="post-title">Instrumenting Go Binaries for Integration Test Coverage</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-06-06
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;3&nbsp;minutes
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-            An approach for measuring coverage of integration or manual testing
-        
-    </div>
-
-    
-
-</article>
-
           
-            <article class="post-preview">
-    <a href="https://raidancampbell.com/posts/abusing-context-part-ii/">
-        <h2 class="post-title">Abusing Context in Go Part II: Recovery</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-06-04
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;10&nbsp;minutes
-  
-  
-  
-  
-</span>
+        </ul>
+      
 
 
-    </p>
-    <div class="post-entry">
-        
-            A method for recovering context in Go that was omitted somewhere up the callstack
-        
-    </div>
+      
 
-    
-
-</article>
-
-          
-            <article class="post-preview">
-    <a href="https://raidancampbell.com/posts/abusing-context-part-i/">
-        <h2 class="post-title">Abusing Context in Go Part I: Serialization</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-05-25
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;7&nbsp;minutes
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-            A method for serializing context to allow it to flow between networked hosts
-        
-    </div>
-
-    
-
-</article>
-
-          
-            <article class="post-preview">
-    <a href="https://raidancampbell.com/posts/context-in-go/">
-        <h2 class="post-title">Design Considerations for Context in Go</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-05-22
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;6&nbsp;minutes
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-            An overview on design paradigms for golang&rsquo;s context library
-        
-    </div>
-
-    
-
-</article>
-
-          
-        </div>
-        
-      </div>
     </div>
   </div>
+</div>
 
       
 <footer>
