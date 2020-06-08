@@ -17,9 +17,7 @@
       <pubDate>Sun, 07 Jun 2020 21:58:09 -0700</pubDate>
       
       <guid>https://raidancampbell.com/posts/low-effort-i-dns-sinkholing/</guid>
-      <description>What I want my laptop to route certain requests differently on my home network, and prevent them on public networks.
-Why I wanted to try this syslog thing, but didn&amp;rsquo;t like the idea of hardcoding a local IP. Even within the 192.168.0.0/16 block, switching wifi networks (e.g. going to a coffee shop) would mean my laptop would try and send logs to the configured IP. No good.
-How Configure your router to resolve something like sinkhole.</description>
+      <description>Keep your sensitive data flowing on trusted (controlled) networks, but sinkhole them outside</description>
     </item>
     
     <item>
