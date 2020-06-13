@@ -7,7 +7,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>raidancampbell - raidancampbell</title>
+  <title>narp - raidancampbell</title>
+  <meta name="description" content="A novel network attack preventing new clients from acquiring an IP address">
   <meta name="author" content="R. Aidan Campbell"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -28,13 +29,63 @@
   
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/raidancampbell.com\/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/raidancampbell.com\/posts\/narp\/",
+          "name": "Narp"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "R. Aidan Campbell"
+  },
+  "headline": "narp",
+  "description" : "A novel network attack preventing new clients from acquiring an IP address",
+  "inLanguage" : "en",
+  "wordCount":  164 ,
+  "datePublished" : "2020-06-07T08:11:47",
+  "dateModified" : "2020-06-07T08:11:47",
+  "image" : "https:\/\/raidancampbell.com\/",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "https:\/\/raidancampbell.com\/posts\/narp\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/raidancampbell.com\/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/raidancampbell.com\/",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
 
-<meta property="og:title" content="raidancampbell" />
-<meta property="og:url" content="https://raidancampbell.com/" />
+<meta property="og:title" content="narp" />
+<meta property="og:description" content="A novel network attack preventing new clients from acquiring an IP address">
+<meta property="og:url" content="https://raidancampbell.com/posts/narp/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="raidancampbell" />
 
-  <meta name="twitter:title" content="raidancampbell" />
+  <meta name="twitter:title" content="narp" />
+  <meta name="twitter:description" content="A novel network attack preventing new clients from acquiring an IP address">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@@raidancampbell" />
   <meta name="twitter:creator" content="@@raidancampbell" />
@@ -147,6 +198,7 @@ if (!doNotTrack) {
   
   
   
+  
 
 
 
@@ -161,17 +213,13 @@ if (!doNotTrack) {
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="page-heading" >
+            <div class="posts-heading" style="text-align: center;">
               
-                <h1>raidancampbell</h1>
+                <h1>narp</h1>
               
               
                 <hr class="small">
               
-              
-                
-                  <span class="page-subheading">Code monkey. IRC advocate. Casual zymurgist.</span>
-                
               
               
             </div>
@@ -183,240 +231,51 @@ if (!doNotTrack) {
 
 
     
-  <div role="main" class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>Address Resolution Protocol, detailed in <a href="https://tools.ietf.org/html/rfc826">RFC 826</a>, provides a simple marriage between the <a href="https://en.wikipedia.org/wiki/Data_link_layer">link layer</a> and the <a href="https://en.wikipedia.org/wiki/Network_layer">network layer</a>.
+For a given subnet, any host can broadcast an ARP request for another host on the same subnet.
+All hosts on the network receive the broadcast and answers are unauthenticated, making ARP the subject of many <a href="https://en.wikipedia.org/wiki/ARP_spoofing">network attacks</a>.</p>
+<p><a href="https://tools.ietf.org/html/rfc5227">RFC 5227</a> expands upon the initial ARP specification by providing a new type of ARP frame, known as an ARP Probe.
+An ARP Probe is meant to prevent IP address collisions.
+When a host first wishes to use an IP address on a given network, RFC 5227 compliant operating systems must send an ARP Probe for the desired IP address.
+After a timeout period, the host considers the IP address unused, and is free to claim it.</p>
+<p>During this timeout window, an attacker has the opportunity to maliciously answer the probe with a forged ARP reply.
+An implementation of this is available <a href="https://github.com/raidancampbell/narp">here</a> for educational use only.</p>
+
+
         
 
-        <div class="posts-list">
-          
-          
-            <article class="post-preview">
-    <a href="https://raidancampbell.com/posts/low-effort-i-dns-sinkholing/">
-        <h2 class="post-title">Low Effort Blog Posts Part I: DNS Sinkholing</h2>
         
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-06-07
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;minutes
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-            Keep your sensitive data flowing on trusted (controlled) networks, but sinkhole them outside
-        
-    </div>
-
-    
-
-</article>
-
-          
-            <article class="post-preview">
-    <a href="https://raidancampbell.com/posts/narp/">
-        <h2 class="post-title">narp</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-06-07
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;minutes
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-            A novel network attack preventing new clients from acquiring an IP address
-        
-    </div>
-
-    
-
-</article>
-
-          
-            <article class="post-preview">
-    <a href="https://raidancampbell.com/posts/runtime-instrumentation/">
-        <h2 class="post-title">Instrumenting Go Binaries for Integration Test Coverage</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-06-06
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;3&nbsp;minutes
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-            An approach for measuring coverage of integration or manual testing
-        
-    </div>
-
-    
-
-</article>
-
-          
-            <article class="post-preview">
-    <a href="https://raidancampbell.com/posts/abusing-context-part-ii/">
-        <h2 class="post-title">Abusing Context in Go Part II: Recovery</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-06-04
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;10&nbsp;minutes
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-            A method for recovering context in Go that was omitted somewhere up the callstack
-        
-    </div>
-
-    
-
-</article>
-
-          
-            <article class="post-preview">
-    <a href="https://raidancampbell.com/posts/abusing-context-part-i/">
-        <h2 class="post-title">Abusing Context in Go Part I: Serialization</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-05-25
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;7&nbsp;minutes
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-            A method for serializing context to allow it to flow between networked hosts
-        
-    </div>
-
-    
-
-</article>
-
-          
-            <article class="post-preview">
-    <a href="https://raidancampbell.com/posts/context-in-go/">
-        <h2 class="post-title">Design Considerations for Context in Go</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020-05-22
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;6&nbsp;minutes
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-            An overview on design paradigms for golang&rsquo;s context library
-        
-    </div>
-
-    
-
-</article>
-
-          
-        </div>
 
         
-      </div>
-    </div>
-  </div>
+      </article>
 
       
-    <div class="page-meta">
-  
-  
-  
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://raidancampbell.com/posts/runtime-instrumentation/" data-toggle="tooltip" data-placement="top" title="Instrumenting Go Binaries for Integration Test Coverage">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://raidancampbell.com/posts/low-effort-i-dns-sinkholing/" data-toggle="tooltip" data-placement="top" title="Low Effort Blog Posts Part I: DNS Sinkholing">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
 </div>
 
-
-  
+      
 <footer>
   <div class="container">
     <div class="row">

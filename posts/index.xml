@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>narp</title>
+      <link>https://raidancampbell.com/posts/narp/</link>
+      <pubDate>Sun, 07 Jun 2020 08:11:47 -0700</pubDate>
+      
+      <guid>https://raidancampbell.com/posts/narp/</guid>
+      <description>A novel network attack preventing new clients from acquiring an IP address</description>
+    </item>
+    
+    <item>
       <title>Instrumenting Go Binaries for Integration Test Coverage</title>
       <link>https://raidancampbell.com/posts/runtime-instrumentation/</link>
       <pubDate>Sat, 06 Jun 2020 23:30:51 -0700</pubDate>
