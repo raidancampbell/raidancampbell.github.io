@@ -59,9 +59,9 @@
   "headline": "narp",
   "description" : "A novel network attack preventing new clients from acquiring an IP address",
   "inLanguage" : "en",
-  "wordCount":  164 ,
-  "datePublished" : "2020-06-07T08:11:47",
-  "dateModified" : "2020-06-07T08:11:47",
+  "wordCount":  171 ,
+  "datePublished" : "2020-06-13T08:11:47",
+  "dateModified" : "2020-06-13T08:11:47",
   "image" : "https:\/\/raidancampbell.com\/",
   "keywords" : [ "" ],
   "mainEntityOfPage" : "https:\/\/raidancampbell.com\/posts\/narp\/",
@@ -243,6 +243,18 @@ An ARP Probe is meant to prevent IP address collisions.
 When a host first wishes to use an IP address on a given network, RFC 5227 compliant operating systems must send an ARP Probe for the desired IP address.
 After a timeout period, the host considers the IP address unused, and is free to claim it.</p>
 <p>During this timeout window, an attacker has the opportunity to maliciously answer the probe with a forged ARP reply.
+In practice, the attack looks like this:
+
+<link rel="stylesheet" href="https://raidancampbell.com/css/hugo-easy-gallery.css" />
+<div class="box" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/media/narp_diagram.svg" alt="/media/narp_diagram.svg"/>
+    </div>
+    <a href="/media/narp_diagram.svg" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
 An implementation of this is available <a href="https://github.com/raidancampbell/narp">here</a> for educational use only.</p>
 
 
@@ -257,13 +269,9 @@ An implementation of this is available <a href="https://github.com/raidancampbel
         <ul class="pager blog-pager">
           
             <li class="previous">
-              <a href="https://raidancampbell.com/posts/runtime-instrumentation/" data-toggle="tooltip" data-placement="top" title="Instrumenting Go Binaries for Integration Test Coverage">&larr; Previous Post</a>
+              <a href="https://raidancampbell.com/posts/low-effort-i-dns-sinkholing/" data-toggle="tooltip" data-placement="top" title="Low Effort Blog Posts Part I: DNS Sinkholing">&larr; Previous Post</a>
             </li>
           
-          
-            <li class="next">
-              <a href="https://raidancampbell.com/posts/low-effort-i-dns-sinkholing/" data-toggle="tooltip" data-placement="top" title="Low Effort Blog Posts Part I: DNS Sinkholing">Next Post &rarr;</a>
-            </li>
           
         </ul>
       

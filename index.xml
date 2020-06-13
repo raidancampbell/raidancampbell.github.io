@@ -6,10 +6,19 @@
     <description>Recent content on raidancampbell</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 07 Jun 2020 21:58:09 -0700</lastBuildDate>
+    <lastBuildDate>Sat, 13 Jun 2020 08:11:47 -0700</lastBuildDate>
     
 	<atom:link href="https://raidancampbell.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>narp</title>
+      <link>https://raidancampbell.com/posts/narp/</link>
+      <pubDate>Sat, 13 Jun 2020 08:11:47 -0700</pubDate>
+      
+      <guid>https://raidancampbell.com/posts/narp/</guid>
+      <description>A novel network attack preventing new clients from acquiring an IP address</description>
+    </item>
     
     <item>
       <title>Low Effort Blog Posts Part I: DNS Sinkholing</title>
@@ -18,15 +27,6 @@
       
       <guid>https://raidancampbell.com/posts/low-effort-i-dns-sinkholing/</guid>
       <description>Keep your sensitive data flowing on trusted (controlled) networks, but sinkhole them outside</description>
-    </item>
-    
-    <item>
-      <title>narp</title>
-      <link>https://raidancampbell.com/posts/narp/</link>
-      <pubDate>Sun, 07 Jun 2020 08:11:47 -0700</pubDate>
-      
-      <guid>https://raidancampbell.com/posts/narp/</guid>
-      <description>A novel network attack preventing new clients from acquiring an IP address</description>
     </item>
     
     <item>
