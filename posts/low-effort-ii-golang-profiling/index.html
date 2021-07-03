@@ -7,8 +7,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>narp - raidancampbell</title>
-  <meta name="description" content="A novel network attack preventing new clients from acquiring an IP address">
+  <title>Low Effort Blog Posts Part II: Golang Profiling - raidancampbell</title>
+  <meta name="description" content="It&rsquo;s callstacks all the way down">
   <meta name="author" content="R. Aidan Campbell"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -44,8 +44,8 @@
         "@type": "ListItem",
         "position": 3,
         "item": {
-          "@id": "https:\/\/raidancampbell.com\/posts\/narp\/",
-          "name": "Narp"
+          "@id": "https:\/\/raidancampbell.com\/posts\/low-effort-ii-golang-profiling\/",
+          "name": "Low effort blog posts part ii golang profiling"
         }
     }]
 }
@@ -56,15 +56,15 @@
   "author": {
     "name" : "R. Aidan Campbell"
   },
-  "headline": "narp",
-  "description" : "A novel network attack preventing new clients from acquiring an IP address",
+  "headline": "Low Effort Blog Posts Part II: Golang Profiling",
+  "description" : "It\u0026rsquo;s callstacks all the way down",
   "inLanguage" : "en",
-  "wordCount":  171 ,
-  "datePublished" : "2020-06-13T08:11:47",
-  "dateModified" : "2020-06-13T08:11:47",
+  "wordCount":  127 ,
+  "datePublished" : "2021-07-03T09:12:27",
+  "dateModified" : "2021-07-03T09:12:27",
   "image" : "https:\/\/raidancampbell.com\/",
   "keywords" : [ "" ],
-  "mainEntityOfPage" : "https:\/\/raidancampbell.com\/posts\/narp\/",
+  "mainEntityOfPage" : "https:\/\/raidancampbell.com\/posts\/low-effort-ii-golang-profiling\/",
   "publisher" : {
     "@type": "Organization",
     "name" : "https:\/\/raidancampbell.com\/",
@@ -78,14 +78,14 @@
 }
 </script>
 
-<meta property="og:title" content="narp" />
-<meta property="og:description" content="A novel network attack preventing new clients from acquiring an IP address">
-<meta property="og:url" content="https://raidancampbell.com/posts/narp/" />
+<meta property="og:title" content="Low Effort Blog Posts Part II: Golang Profiling" />
+<meta property="og:description" content="It&rsquo;s callstacks all the way down">
+<meta property="og:url" content="https://raidancampbell.com/posts/low-effort-ii-golang-profiling/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="raidancampbell" />
 
-  <meta name="twitter:title" content="narp" />
-  <meta name="twitter:description" content="A novel network attack preventing new clients from acquiring an IP address">
+  <meta name="twitter:title" content="Low Effort Blog Posts Part II: Golang Profiling" />
+  <meta name="twitter:description" content="It&rsquo;s callstacks all the way down">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@@raidancampbell" />
   <meta name="twitter:creator" content="@@raidancampbell" />
@@ -212,9 +212,9 @@ if (!doNotTrack) {
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="posts-heading" style="text-align: center;">
+            <div class="posts-heading" >
               
-                <h1>narp</h1>
+                <h1>Low Effort Blog Posts Part II: Golang Profiling</h1>
               
               
                 <hr class="small">
@@ -234,27 +234,12 @@ if (!doNotTrack) {
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
-        <p>Address Resolution Protocol, detailed in <a href="https://tools.ietf.org/html/rfc826">RFC 826</a>, provides a simple marriage between the <a href="https://en.wikipedia.org/wiki/Data_link_layer">link layer</a> and the <a href="https://en.wikipedia.org/wiki/Network_layer">network layer</a>.
-For a given subnet, any host can broadcast an ARP request for another host on the same subnet.
-All hosts on the network receive the broadcast and answers are unauthenticated, making ARP the subject of many <a href="https://en.wikipedia.org/wiki/ARP_spoofing">network attacks</a>.</p>
-<p><a href="https://tools.ietf.org/html/rfc5227">RFC 5227</a> expands upon the initial ARP specification by providing a new type of ARP frame, known as an ARP Probe.
-An ARP Probe is meant to prevent IP address collisions.
-When a host first wishes to use an IP address on a given network, RFC 5227 compliant operating systems must send an ARP Probe for the desired IP address.
-After a timeout period, the host considers the IP address unused, and is free to claim it.</p>
-<p>During this timeout window, an attacker has the opportunity to maliciously answer the probe with a forged ARP reply.
-In practice, the attack looks like this:
-
-<link rel="stylesheet" href="https://raidancampbell.com/css/hugo-easy-gallery.css" />
-<div class="box" >
-  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-    <div class="img">
-      <img itemprop="thumbnail" src="/media/narp_diagram.svg" alt="/media/narp_diagram.svg"/>
-    </div>
-    <a href="/media/narp_diagram.svg" itemprop="contentUrl"></a>
-  </figure>
-</div>
-
-An implementation of this is available <a href="https://github.com/raidancampbell/narp">here</a> for educational use only.</p>
+        <h2 id="golang-profiling-is-mostly-just-callstack-aggregation">Golang profiling is mostly just callstack aggregation</h2>
+<p>Out of the box the Go runtime exposes a handful of profiling options, most commonly the CPU and memory profilers.</p>
+<p>The CPU profiler is roughly the equivalent of &ldquo;100 times a second, show me the stacks of all running goroutines&rdquo;.
+&ldquo;running&rdquo; here means actually running, not paused for IO, sleeping, or mutex contention, so it&rsquo;s only useful for diagnosing high CPU usage.</p>
+<p>The heap (memory) profiler is similar: &ldquo;roughly once per 512KB of allocated memory, capture the callstack of the allocating goroutine&rdquo;, decorated with how much memory they allocated.
+There&rsquo;s some more data that the memory management / garbage collector will expose (e.g. how much of this memory is in use vs ever allocated, or how many allocations were performed).</p>
 
 
         
@@ -268,13 +253,9 @@ An implementation of this is available <a href="https://github.com/raidancampbel
         <ul class="pager blog-pager">
           
             <li class="previous">
-              <a href="https://raidancampbell.com/posts/low-effort-i-dns-sinkholing/" data-toggle="tooltip" data-placement="top" title="Low Effort Blog Posts Part I: DNS Sinkholing">&larr; Previous Post</a>
+              <a href="https://raidancampbell.com/posts/narp/" data-toggle="tooltip" data-placement="top" title="narp">&larr; Previous Post</a>
             </li>
           
-          
-            <li class="next">
-              <a href="https://raidancampbell.com/posts/low-effort-ii-golang-profiling/" data-toggle="tooltip" data-placement="top" title="Low Effort Blog Posts Part II: Golang Profiling">Next Post &rarr;</a>
-            </li>
           
         </ul>
       

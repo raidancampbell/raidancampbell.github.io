@@ -59,7 +59,7 @@
   "headline": "Instrumenting Go Binaries for Integration Test Coverage",
   "description" : "An approach for measuring coverage of integration or manual testing",
   "inLanguage" : "en",
-  "wordCount":  604 ,
+  "wordCount":  598 ,
   "datePublished" : "2020-06-06T23:30:51",
   "dateModified" : "2020-06-06T23:30:51",
   "image" : "https:\/\/raidancampbell.com\/",
@@ -89,7 +89,7 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@@raidancampbell" />
   <meta name="twitter:creator" content="@@raidancampbell" />
-  <meta name="generator" content="Hugo 0.76.5" />
+  <meta name="generator" content="Hugo 0.83.1" />
   <link rel="alternate" href="https://raidancampbell.com/index.xml" type="application/rss+xml" title="raidancampbell">
   <link rel="stylesheet" href="https://raidancampbell.com/fontawesome/css/all.css" />
   <link rel="stylesheet" href="https://raidancampbell.com/css/bootstrap.min.css" /><link rel="stylesheet" href="https://raidancampbell.com/css/main.css" /><link rel="stylesheet" href="https://raidancampbell.com/css/fonts.css" /><link rel="stylesheet" href="https://raidancampbell.com/css/syntax.css" /><link rel="stylesheet" href="https://raidancampbell.com/css/codeblock.css" /><link rel="stylesheet" href="https://raidancampbell.com/css/photoswipe.min.css" />
@@ -271,10 +271,9 @@ There&rsquo;s many more options here: HTTP kill endpoints, reading timeouts from
 Again, the point of this test function is just &ldquo;run <code>main()</code>, and gracefully stop when the testing is done&rdquo;.
 A sample to support SIGINT alongside a timeout looks like this:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Test_main</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
-	<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">main</span>()
-	<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#ae81ff">10</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
-	<span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Signal</span>, <span style="color:#ae81ff">1</span>)
-	<span style="color:#a6e22e">signal</span>.<span style="color:#a6e22e">Notify</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Interrupt</span>)
+    <span style="color:#66d9ef">go</span> <span style="color:#a6e22e">main</span>()
+    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Signal</span>, <span style="color:#ae81ff">1</span>)
+    <span style="color:#a6e22e">signal</span>.<span style="color:#a6e22e">Notify</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Interrupt</span>)
     <span style="color:#66d9ef">select</span> {
         <span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">c</span>:
             <span style="color:#66d9ef">return</span>
@@ -299,10 +298,9 @@ The only code change is adding the build tag at the top of the file:</p>
 )
 
 <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Test_main</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
-	<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">main</span>()
-	<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#ae81ff">10</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
-	<span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Signal</span>, <span style="color:#ae81ff">1</span>)
-	<span style="color:#a6e22e">signal</span>.<span style="color:#a6e22e">Notify</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Interrupt</span>)
+    <span style="color:#66d9ef">go</span> <span style="color:#a6e22e">main</span>()
+    <span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Signal</span>, <span style="color:#ae81ff">1</span>)
+    <span style="color:#a6e22e">signal</span>.<span style="color:#a6e22e">Notify</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Interrupt</span>)
     <span style="color:#66d9ef">select</span> {
         <span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">c</span>:
             <span style="color:#66d9ef">return</span>
@@ -388,7 +386,7 @@ The test can safely be committed and won&rsquo;t impact any existing usage, as i
 
           &nbsp;&bull;&nbsp;&copy;
           
-            2020
+            2021
           
 
           
@@ -398,7 +396,7 @@ The test can safely be committed and won&rsquo;t impact any existing usage, as i
         </p>
         
         <p class="credits theme-by text-muted">
-          <a href="https://gohugo.io">Hugo v0.76.5</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          <a href="https://gohugo.io">Hugo v0.83.1</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>

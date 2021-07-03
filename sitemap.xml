@@ -1,53 +1,36 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
+    <loc>https://raidancampbell.com/posts/low-effort-ii-golang-profiling/</loc>
+    <lastmod>2021-07-03T09:12:27-04:00</lastmod>
+  </url><url>
+    <loc>https://raidancampbell.com/posts/</loc>
+    <lastmod>2021-07-03T09:12:27-04:00</lastmod>
+  </url><url>
+    <loc>https://raidancampbell.com/</loc>
+    <lastmod>2021-07-03T09:12:27-04:00</lastmod>
+  </url><url>
     <loc>https://raidancampbell.com/posts/narp/</loc>
     <lastmod>2020-06-13T08:11:47-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://raidancampbell.com/posts/</loc>
-    <lastmod>2020-06-13T08:11:47-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://raidancampbell.com/</loc>
-    <lastmod>2020-06-13T08:11:47-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://raidancampbell.com/posts/low-effort-i-dns-sinkholing/</loc>
     <lastmod>2020-06-07T21:58:09-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://raidancampbell.com/posts/runtime-instrumentation/</loc>
     <lastmod>2020-06-06T23:30:51-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://raidancampbell.com/posts/abusing-context-part-ii/</loc>
     <lastmod>2020-06-04T16:31:47-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://raidancampbell.com/posts/abusing-context-part-i/</loc>
     <lastmod>2020-05-25T10:29:46-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://raidancampbell.com/posts/context-in-go/</loc>
     <lastmod>2020-05-22T14:58:47-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://raidancampbell.com/categories/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://raidancampbell.com/tags/</loc>
   </url>
-  
 </urlset>

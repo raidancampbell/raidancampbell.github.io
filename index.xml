@@ -6,7 +6,16 @@
     <description>Recent content on raidancampbell</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 13 Jun 2020 08:11:47 -0700</lastBuildDate><atom:link href="https://raidancampbell.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Jul 2021 09:12:27 -0400</lastBuildDate><atom:link href="https://raidancampbell.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Low Effort Blog Posts Part II: Golang Profiling</title>
+      <link>https://raidancampbell.com/posts/low-effort-ii-golang-profiling/</link>
+      <pubDate>Sat, 03 Jul 2021 09:12:27 -0400</pubDate>
+      
+      <guid>https://raidancampbell.com/posts/low-effort-ii-golang-profiling/</guid>
+      <description>It&amp;rsquo;s callstacks all the way down</description>
+    </item>
+    
     <item>
       <title>narp</title>
       <link>https://raidancampbell.com/posts/narp/</link>
